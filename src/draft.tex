@@ -1,0 +1,67 @@
+
+\documentclass[border=1mm]{standalone}
+
+\usepackage{tikz}
+\usepackage{xinttools}
+
+\begin{document}
+
+\def\initialboard{
+000000000000000000000000000100000000,
+000000000000000000000000001010000000,
+000000000110000000000000001101000000,
+000000000101000000000000001101100011,
+000011000000100000000000001101000011,
+110100100100100000000000001010000000,
+110011000000100000000100000100000000,
+000000000101000000010100000000000000,
+000000000110000000001100000000000000,
+000000000000000000000000000000000000,
+000000000000000000000000000000000000,
+000000000000000000000000000000000000,
+000000000000000000000000000000000000,
+000000000000000000000000000010000000,
+000000000000000000000000000001000000,
+000000000000000000000000000111000000,
+000000000000000000000000000000000000,
+000000000000000000000000000000000000,
+000000000000000000000000000000000000
+}
+
+\newcount\Xmax
+\newcount\Ymax
+
+\Ymax 0
+
+\xintFor #1 in \initialboard  \do
+{%
+	\advance\Ymax by 1
+
+	\Xmax 0
+
+	\xintFor* #2 in {#1} \do
+	{%
+		\advance\Xmax by 1
+		\expandafter\def\csname node\the\Xmax.\the\Ymax\endcsname {#2}%
+	}%
+}%
+
+\newcommand\PPrint {%
+	\begin{tikzpicture}
+	\draw(0,0) grid(\the\Xmax,\the\Ymax);
+	\xintFor ##1 in \xintintegers \do {%
+		\xintFor ##2 in \xintintegers \do {%
+			\ifcase\csname node\the##1.\the##2\endcsname
+			\else
+				\fill(\the##1 - 1, \the##2 - 1)+(0.5, 0.5) circle (0.4);
+			\fi
+			\ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+		}%
+		\ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
+	}%
+	\end{tikzpicture}
+}%
+
+\PPrint{}
+
+\end{document}
