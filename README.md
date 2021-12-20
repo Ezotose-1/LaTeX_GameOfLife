@@ -1,2 +1,2 @@
-# LaTeX_GOF
+# LaTeX_GameOfLife
 Game Of Life - LaTeX
