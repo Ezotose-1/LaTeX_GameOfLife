@@ -29,6 +29,7 @@
 
 \newcount\Xmax
 \newcount\Ymax
+\newcount\NeighboursCount
 
 \Ymax 0
 
@@ -86,14 +87,32 @@
     \end{page}
 }%
 
+% #1 = x, #2 = y %
+\newcommand\Neighborhood[2]{%
+    #1 ,\ 
+    #2
+    --- \\\
+
+    x y+1   : \expandafter{\csname node#1.\number\numexpr#2+1\endcsname}    \\\
+    x+1 y+1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname}    \\\
+    x-1 y+1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname}    \\\
+    x-1 y   : \expandafter{\csname node\number\numexpr#1.#2\endcsname}    \\\
+    x+1 y   : \expandafter{\csname node\number\numexpr#1.#2\endcsname}    \\\
+    x y-1   : \expandafter{\csname node#1.\number\numexpr#2-1\endcsname}    \\\
+    x+1 y-1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname}    \\\
+    x-1 y-1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname}    \\\
+
+}%
+
 % Generate the new node value for each saveNodes %
 \newcommand\Generate {%
     \xintFor ##1 in \xintintegers \do
     {%
         \xintFor ##2 in \xintintegers \do
         {%
+
             % node = !oldnode %
-            \ifcase\csname node\the##1.\the##2\endcsname
+            \ifcase\csname oldnode\the##1.\the##2\endcsname
                 \expandafter\def\csname node\the##1.\the##2\endcsname {1}%
             \else
                 \expandafter\def\csname node\the##1.\the##2\endcsname {0}%
@@ -110,5 +129,10 @@
 \SaveNodes{}
 \Generate{}
 \PPrint{}
+\SaveNodes{}
+\Generate{}
+\PPrint{}
+
+\Neighborhood{1}{5}
 
 \end{document}
