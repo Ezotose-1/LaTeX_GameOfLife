@@ -1,5 +1,4 @@
-
-\documentclass[border=1mm]{standalone}
+\documentclass[border=1mm,multi=page]{standalone}
 
 \usepackage{tikz}
 \usepackage{xinttools}
@@ -33,35 +32,83 @@
 
 \Ymax 0
 
+% \brief create variables for each cell of the board %
 \xintFor #1 in \initialboard  \do
 {%
-	\advance\Ymax by 1
+    \advance\Ymax by 1
 
-	\Xmax 0
+    \Xmax 0
 
-	\xintFor* #2 in {#1} \do
-	{%
-		\advance\Xmax by 1
-		\expandafter\def\csname node\the\Xmax.\the\Ymax\endcsname {#2}%
-	}%
+    \xintFor* #2 in {#1} \do
+    {%
+        \advance\Xmax by 1
+        \expandafter\def\csname node\the\Xmax.\the\Ymax\endcsname {#2}%
+    }%
 }%
 
+% \brief For each current node -> create a save node to build the next generations %
+\newcommand\SaveNodes{%
+    \xintFor ##1 in \xintintegers \do
+    {%
+        \xintFor ##2 in \xintintegers \do
+        {%
+            \expandafter\def\csname oldnode\the##1.\the##2\endcsname {\csname node\the##1.\the##2\endcsname}%
+            % End of line -> break %
+           \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+       }%
+       % End of column -> break %
+       \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
+   }%
+}%
+
+% \brief Pretty print the current generation %
 \newcommand\PPrint {%
-	\begin{tikzpicture}
-	\draw(0,0) grid(\the\Xmax,\the\Ymax);
-	\xintFor ##1 in \xintintegers \do {%
-		\xintFor ##2 in \xintintegers \do {%
-			\ifcase\csname node\the##1.\the##2\endcsname
-			\else
-				\fill(\the##1 - 1, \the##2 - 1)+(0.5, 0.5) circle (0.4);
-			\fi
-			\ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
-		}%
-		\ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
-	}%
-	\end{tikzpicture}
+    \begin{page}
+    \begin{tikzpicture}
+        % Draw the main grid %
+        \draw(0,0) grid(\the\Xmax,\the\Ymax);
+        % Draw the right living cell %
+        \xintFor ##1 in \xintintegers \do
+        {%
+            \xintFor ##2 in \xintintegers \do
+            {%
+                \ifcase\csname node\the##1.\the##2\endcsname
+                \else
+                    \fill(\the##1 - 1, \the##2 - 1)+(0.5, 0.5) circle (0.4);
+                \fi
+                % End of line -> break %
+                \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+            }%
+            % End of column -> break %
+            \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
+        }%
+    \end{tikzpicture}
+    \end{page}
 }%
 
+% Generate the new node value for each saveNodes %
+\newcommand\Generate {%
+    \xintFor ##1 in \xintintegers \do
+    {%
+        \xintFor ##2 in \xintintegers \do
+        {%
+            % node = !oldnode %
+            \ifcase\csname node\the##1.\the##2\endcsname
+                \expandafter\def\csname node\the##1.\the##2\endcsname {1}%
+            \else
+                \expandafter\def\csname node\the##1.\the##2\endcsname {0}%
+            \fi
+            % End of line -> break %
+           \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+       }%
+       % End of column -> break %
+       \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
+   }%
+}%
+
+\PPrint{}
+\SaveNodes{}
+\Generate{}
 \PPrint{}
 
 \end{document}
