@@ -102,6 +102,11 @@
     x+1 y-1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname}    \\\
     x-1 y-1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname}    \\\
 
+    \NeighboursCount 42
+%    \def{\tmp}{\value{\expandafter{\csname node#1.\number\numexpr#2+1\endcsname}}}
+    \value\expandafter{\csname node#1.\number\numexpr#2+1\endcsname}
+%    \advance\NeighboursCount by \value{\csname node#1.\number\numexpr#2+1\endcsname}
+    \the\NeighboursCount
 }%
 
 % Generate the new node value for each saveNodes %
