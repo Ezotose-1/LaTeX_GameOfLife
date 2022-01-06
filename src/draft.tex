@@ -53,7 +53,7 @@
 \xintFor #1 in \xintintegers \do
 {%
     \expandafter\def\csname oldnode\the#1.0\endcsname {0}%
-    \expandafter\def\csname oldnode\the#1.\the\numexpr\Ymax+1\endcsname {1}%
+    \expandafter\def\csname oldnode\the#1.\the\numexpr\Ymax+1\endcsname {0}%
     % End of column -> break %
     \ifnum #1=\Xmax\expandafter\xintBreakFor\fi
 }%
@@ -66,10 +66,10 @@
     \ifnum #2=\Ymax\expandafter\xintBreakFor\fi
 }%
 % OUT OF BOARD angles %
-\expandafter\def\csname oldnode 0.0\endcsname {0}%
-\expandafter\def\csname oldnode \the\numexpr\Xmax+1.0\endcsname {0}%
-\expandafter\def\csname oldnode 0.\the\numexpr\Ymax+1\endcsname {0}%
-\expandafter\def\csname oldnode \the\numexpr\Xmax+1.\the\numexpr\Ymax+1\endcsname {0}%
+\expandafter\def\csname oldnode0.0\endcsname {0}%
+\expandafter\def\csname oldnode\the\numexpr\Xmax+1.0\endcsname {0}%
+\expandafter\def\csname oldnode0.\the\numexpr\Ymax+1\endcsname {0}%
+\expandafter\def\csname oldnode\the\numexpr\Xmax+1.\the\numexpr\Ymax+1\endcsname {0}%
 
 % \brief For each current node -> create a save node to build the next generations %
 \newcommand\SaveNodes{%
@@ -77,7 +77,11 @@
     {%
         \xintFor ##2 in \xintintegers \do
         {%
-            \expandafter\def\csname oldnode\the##1.\the##2\endcsname {\csname node\the##1.\the##2\endcsname}%
+        	\ifcase\csname node\the##1.\the##2\endcsname
+            	\expandafter\def\csname oldnode\the##1.\the##2\endcsname {0}%
+            \else
+            	\expandafter\def\csname oldnode\the##1.\the##2\endcsname {1}%
+            \fi
             % End of line -> break %
            \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
        }%
@@ -114,36 +118,42 @@
 % #1 = x, #2 = y %
 \newcommand\Neighborhood[2]{%
 
-     \NeighboursCount 0
+    \NeighboursCount 0
 
-     \advance\NeighboursCount by \csname oldnode#1.\number\numexpr#2+1\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2+1\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2+1\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.#2\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.#2\endcsname
-     \advance\NeighboursCount by \csname oldnode#1.\number\numexpr#2-1\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2-1\endcsname
-     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2-1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number#1.\number\numexpr#2+1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2+1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2+1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number#2\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number#2\endcsname
+    \advance\NeighboursCount by \csname oldnode\number#1.\number\numexpr#2-1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2-1\endcsname
+    \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2-1\endcsname
 
-    % x, y+1
-%     \advance\NeighboursCount by \csname node#1.\number\numexpr#2+1\endcsname
-%    % x+1, y+1
-%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname
-%    % x-1, y+1
-%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname
-%    % x-1, y
-%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.#2\endcsname
-%    % x+1, y
-%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.#2\endcsname
-%    % x+1, y-1
-%    \advance\NeighboursCount by \csname node#1.\number\numexpr#2-1\endcsname
-%    % x+1, y-1
-%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname
-%    % x-1, y+1
-%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname
-    \the\NeighboursCount
+    %\the\NeighboursCount
 
 }%
+
+
+\newcommand\ApplyRules[2]{%
+
+	\Neighborhood{\number#1}{\number#2}
+
+	\ifnum \the\NeighboursCount=3
+		\expandafter\def\csname node#1.#2\endcsname {1}%
+	\else
+		\ifnum \the\NeighboursCount=2 
+			\ifcase\csname oldnode\number#1.\number#2\endcsname
+				\expandafter\def\csname node#1.#2\endcsname {0}%
+			\else
+				\expandafter\def\csname node#1.#2\endcsname {1}%
+			\fi
+		\else
+			\expandafter\def\csname node#1.#2\endcsname {0}%
+		\fi
+	\fi
+
+}%
+
 
 
 % Generate the new node value for each saveNodes %
@@ -153,14 +163,9 @@
         \xintFor ##2 in \xintintegers \do
         {%
 
-            % node = !oldnode %
-            \ifcase\csname oldnode\the##1.\the##2\endcsname
-                \expandafter\def\csname node\the##1.\the##2\endcsname {1}%
-            \else
-                \expandafter\def\csname node\the##1.\the##2\endcsname {0}%
-            \fi
+       		\ApplyRules{\the##1}{\the##2}
             % End of line -> break %
-           \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+        	\ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
        }%
        % End of column -> break %
        \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
@@ -169,12 +174,16 @@
 
 \PPrint{}
 \SaveNodes{}
+%\expandafter\def\csname node1.1\endcsname {1}%
 \Generate{}
-\PPrint{}
-\SaveNodes{}
-\Generate{}
-\PPrint{}
+%\PPrint{}
 
-\Neighborhood{1}{5}
+%\ApplyRules{21}{7}
+%\Neighborhood{21}{7}
+%\the\NeighboursCount
+
+%\SaveNodes{}
+%\Generate{}
+\PPrint{}
 
 \end{document}
