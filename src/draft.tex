@@ -89,25 +89,41 @@
 
 % #1 = x, #2 = y %
 \newcommand\Neighborhood[2]{%
-    #1 ,\ 
-    #2
-    --- \\\
+%    #1 ,\ 
+%    #2
+%    --- \\\
+%
+%    x y+1   : \expandafter{\csname node#1.\number\numexpr#2+1\endcsname}    \\\
+%    x+1 y+1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname}    \\\
+%    x-1 y+1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname}    \\\
+%    x-1 y   : \expandafter{\csname node\number\numexpr#1-1.#2\endcsname}    \\\
+%    x+1 y   : \expandafter{\csname node\number\numexpr#1+1.#2\endcsname}    \\\
+%    x y-1   : \expandafter{\csname node#1.\number\numexpr#2-1\endcsname}    \\\
+%    x+1 y-1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname}    \\\
+%    x-1 y-1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname}    \\\
+%
 
-    x y+1   : \expandafter{\csname node#1.\number\numexpr#2+1\endcsname}    \\\
-    x+1 y+1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname}    \\\
-    x-1 y+1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname}    \\\
-    x-1 y   : \expandafter{\csname node\number\numexpr#1.#2\endcsname}    \\\
-    x+1 y   : \expandafter{\csname node\number\numexpr#1.#2\endcsname}    \\\
-    x y-1   : \expandafter{\csname node#1.\number\numexpr#2-1\endcsname}    \\\
-    x+1 y-1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname}    \\\
-    x-1 y-1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname}    \\\
+\NeighboursCount 0
+% x, y+1
+\advance\NeighboursCount by \csname node#1.\number\numexpr#2+1\endcsname \\\
+% x+1, y+1
+\advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname
+% x-1, y+1
+\advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname
+% x-1, y
+\advance\NeighboursCount by \csname node\number\numexpr#1-1.#2\endcsname
+% x+1, y
+\advance\NeighboursCount by \csname node\number\numexpr#1+1.#2\endcsname
+% x+1, y-1
+\advance\NeighboursCount by \csname node#1.\number\numexpr#2-1\endcsname
+% x+1, y-1
+\advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname
+% x-1, y+1
+\advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname
+\the\NeighboursCount \\\
 
-    \NeighboursCount 42
-%    \def{\tmp}{\value{\expandafter{\csname node#1.\number\numexpr#2+1\endcsname}}}
-    \value\expandafter{\csname node#1.\number\numexpr#2+1\endcsname}
-%    \advance\NeighboursCount by \value{\csname node#1.\number\numexpr#2+1\endcsname}
-    \the\NeighboursCount
 }%
+
 
 % Generate the new node value for each saveNodes %
 \newcommand\Generate {%
