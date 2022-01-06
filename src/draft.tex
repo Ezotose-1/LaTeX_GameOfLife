@@ -47,6 +47,30 @@
     }%
 }%
 
+
+% Create OUT-OF-BOUND node %
+% 0 -> Xmax %
+\xintFor #1 in \xintintegers \do
+{%
+    \expandafter\def\csname oldnode\the#1.0\endcsname {0}%
+    \expandafter\def\csname oldnode\the#1.\the\numexpr\Ymax+1\endcsname {1}%
+    % End of column -> break %
+    \ifnum #1=\Xmax\expandafter\xintBreakFor\fi
+}%
+% 0 -> Ymax %
+\xintFor #2 in \xintintegers \do
+{%
+    \expandafter\def\csname oldnode0.\the#2\endcsname {0}%
+    \expandafter\def\csname oldnode\the\numexpr\Xmax+1.\the#2\endcsname {0}%
+    % End of column -> break %
+    \ifnum #2=\Ymax\expandafter\xintBreakFor\fi
+}%
+% OUT OF BOARD angles %
+\expandafter\def\csname oldnode 0.0\endcsname {0}%
+\expandafter\def\csname oldnode \the\numexpr\Xmax+1.0\endcsname {0}%
+\expandafter\def\csname oldnode 0.\the\numexpr\Ymax+1\endcsname {0}%
+\expandafter\def\csname oldnode \the\numexpr\Xmax+1.\the\numexpr\Ymax+1\endcsname {0}%
+
 % \brief For each current node -> create a save node to build the next generations %
 \newcommand\SaveNodes{%
     \xintFor ##1 in \xintintegers \do
@@ -89,38 +113,35 @@
 
 % #1 = x, #2 = y %
 \newcommand\Neighborhood[2]{%
-%    #1 ,\ 
-%    #2
-%    --- \\\
-%
-%    x y+1   : \expandafter{\csname node#1.\number\numexpr#2+1\endcsname}    \\\
-%    x+1 y+1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname}    \\\
-%    x-1 y+1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname}    \\\
-%    x-1 y   : \expandafter{\csname node\number\numexpr#1-1.#2\endcsname}    \\\
-%    x+1 y   : \expandafter{\csname node\number\numexpr#1+1.#2\endcsname}    \\\
-%    x y-1   : \expandafter{\csname node#1.\number\numexpr#2-1\endcsname}    \\\
-%    x+1 y-1 : \expandafter{\csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname}    \\\
-%    x-1 y-1 : \expandafter{\csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname}    \\\
-%
 
-\NeighboursCount 0
-% x, y+1
-\advance\NeighboursCount by \csname node#1.\number\numexpr#2+1\endcsname \\\
-% x+1, y+1
-\advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname
-% x-1, y+1
-\advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname
-% x-1, y
-\advance\NeighboursCount by \csname node\number\numexpr#1-1.#2\endcsname
-% x+1, y
-\advance\NeighboursCount by \csname node\number\numexpr#1+1.#2\endcsname
-% x+1, y-1
-\advance\NeighboursCount by \csname node#1.\number\numexpr#2-1\endcsname
-% x+1, y-1
-\advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname
-% x-1, y+1
-\advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname
-\the\NeighboursCount \\\
+     \NeighboursCount 0
+
+     \advance\NeighboursCount by \csname oldnode#1.\number\numexpr#2+1\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2+1\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2+1\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.#2\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.#2\endcsname
+     \advance\NeighboursCount by \csname oldnode#1.\number\numexpr#2-1\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2-1\endcsname
+     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2-1\endcsname
+
+    % x, y+1
+%     \advance\NeighboursCount by \csname node#1.\number\numexpr#2+1\endcsname
+%    % x+1, y+1
+%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2+1\endcsname
+%    % x-1, y+1
+%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2+1\endcsname
+%    % x-1, y
+%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.#2\endcsname
+%    % x+1, y
+%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.#2\endcsname
+%    % x+1, y-1
+%    \advance\NeighboursCount by \csname node#1.\number\numexpr#2-1\endcsname
+%    % x+1, y-1
+%    \advance\NeighboursCount by \csname node\number\numexpr#1+1.\number\numexpr#2-1\endcsname
+%    % x-1, y+1
+%    \advance\NeighboursCount by \csname node\number\numexpr#1-1.\number\numexpr#2-1\endcsname
+    \the\NeighboursCount
 
 }%
 
