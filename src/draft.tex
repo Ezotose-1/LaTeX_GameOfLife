@@ -5,6 +5,7 @@
 
 \begin{document}
 
+% Board of the game : 0 deads cells, 1 alives cells %
 \def\initialboard{
 000000000000000000000000000100000000,
 000000000000000000000000001010000000,
@@ -27,13 +28,14 @@
 000000000000000000000000000000000000
 }
 
+% Create and init globals variables %
 \newcount\Xmax
 \newcount\Ymax
 \newcount\NeighboursCount
 
 \Ymax 0
 
-% \brief create variables for each cell of the board %
+% \brief: Create variables for each cell of the board %
 \xintFor #1 in \initialboard  \do
 {%
     \advance\Ymax by 1
@@ -47,9 +49,8 @@
     }%
 }%
 
-
-% Create OUT-OF-BOUND node %
-% 0 -> Xmax %
+% \brief: Create OUT-OF-BOUND nodes to avoid Neighborhood errors %
+% 1 -> Xmax %
 \xintFor #1 in \xintintegers \do
 {%
     \expandafter\def\csname oldnode\the#1.0\endcsname {0}%
@@ -57,7 +58,7 @@
     % End of column -> break %
     \ifnum #1=\Xmax\expandafter\xintBreakFor\fi
 }%
-% 0 -> Ymax %
+% 1 -> Ymax %
 \xintFor #2 in \xintintegers \do
 {%
     \expandafter\def\csname oldnode0.\the#2\endcsname {0}%
@@ -71,16 +72,16 @@
 \expandafter\def\csname oldnode0.\the\numexpr\Ymax+1\endcsname {0}%
 \expandafter\def\csname oldnode\the\numexpr\Xmax+1.\the\numexpr\Ymax+1\endcsname {0}%
 
-% \brief For each current node -> create a save node to build the next generations %
+% \brief: For each current node -> create a save node to build the next generations %
 \newcommand\SaveNodes{%
     \xintFor ##1 in \xintintegers \do
     {%
         \xintFor ##2 in \xintintegers \do
         {%
-        	\ifcase\csname node\the##1.\the##2\endcsname
-            	\expandafter\def\csname oldnode\the##1.\the##2\endcsname {0}%
+            \ifcase\csname node\the##1.\the##2\endcsname
+                \expandafter\def\csname oldnode\the##1.\the##2\endcsname {0}%
             \else
-            	\expandafter\def\csname oldnode\the##1.\the##2\endcsname {1}%
+                \expandafter\def\csname oldnode\the##1.\the##2\endcsname {1}%
             \fi
             % End of line -> break %
            \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
@@ -90,7 +91,7 @@
    }%
 }%
 
-% \brief Pretty print the current generation %
+% \brief: Pretty print the current generation of the nodes %
 \newcommand\PPrint {%
     \begin{page}
     \begin{tikzpicture}
@@ -115,7 +116,8 @@
     \end{page}
 }%
 
-% #1 = x, #2 = y %
+% \brief: Count all neighbours of a cell and store the result in NeighboursCount %
+% \params: #1 is x position, #2 is y position %
 \newcommand\Neighborhood[2]{%
 
     \NeighboursCount 0
@@ -129,61 +131,65 @@
     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2-1\endcsname
     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2-1\endcsname
 
-    %\the\NeighboursCount
-
 }%
 
-
+% \brief: Apply GameOfLife rules on one cells %
+% \params: #1 is x position, #2 is y position %
 \newcommand\ApplyRules[2]{%
 
-	\Neighborhood{\number#1}{\number#2}
+    \Neighborhood{\number#1}{\number#2}
 
-	\ifnum \the\NeighboursCount=3
-		\expandafter\def\csname node#1.#2\endcsname {1}%
-	\else
-		\ifnum \the\NeighboursCount=2 
-			\ifcase\csname oldnode\number#1.\number#2\endcsname
-				\expandafter\def\csname node#1.#2\endcsname {0}%
-			\else
-				\expandafter\def\csname node#1.#2\endcsname {1}%
-			\fi
-		\else
-			\expandafter\def\csname node#1.#2\endcsname {0}%
-		\fi
-	\fi
+    \ifnum \the\NeighboursCount=3
+        \expandafter\def\csname node#1.#2\endcsname {1}%
+    \else
+        \ifnum \the\NeighboursCount=2 
+            \ifcase\csname oldnode\number#1.\number#2\endcsname
+                \expandafter\def\csname node#1.#2\endcsname {0}%
+            \else
+                \expandafter\def\csname node#1.#2\endcsname {1}%
+            \fi
+        \else
+            \expandafter\def\csname node#1.#2\endcsname {0}%
+        \fi
+    \fi
 
 }%
 
 
 
-% Generate the new node value for each saveNodes %
+% \brief: Generate the new node value for each saveNodes based on ApplyRules %
 \newcommand\Generate {%
     \xintFor ##1 in \xintintegers \do
     {%
         \xintFor ##2 in \xintintegers \do
         {%
 
-       		\ApplyRules{\the##1}{\the##2}
+            \ApplyRules{\the##1}{\the##2}
             % End of line -> break %
-        	\ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
+            \ifnum ##2=\Ymax\expandafter\xintBreakFor\fi
        }%
        % End of column -> break %
        \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
    }%
 }%
 
-\PPrint{}
-\SaveNodes{}
-%\expandafter\def\csname node1.1\endcsname {1}%
-\Generate{}
-%\PPrint{}
+% \brief: Generate many generations %
+% \param: #1 number of generations to build %
+\newcommand\Generations[1] {%
+    \newcount\X
+    \X=#1
+    \loop
+    \advance \X by -1
+    \ifnum \X>-1
+        \SaveNodes{}
+        \Generate{}
+        \PPrint{}
+    \repeat
 
-%\ApplyRules{21}{7}
-%\Neighborhood{21}{7}
-%\the\NeighboursCount
+}%
 
-%\SaveNodes{}
-%\Generate{}
 \PPrint{}
+% Load precise number of generations into the pdf %
+\Generations{100}
 
 \end{document}
