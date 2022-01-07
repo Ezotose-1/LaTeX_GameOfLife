@@ -5,9 +5,7 @@ Reimplementation of the classic **[Conway's game of life](https://en.wikipedia.o
 ## Render
 Using ``pdflatex``, the program will produce a *draft.pdf* file with all generations (default=100) a page for each.
 Gif picture of all slide for the *glider_gun* schema :
-<p align="center">
-	<img src="http://ezodev.tk/static/GameOfLife_latex.gif" width="350" title="hover text">
-</p>
+![Alt](http://ezodev.tk/static/GameOfLife_latex.gif)
 
 
 ## Installation
