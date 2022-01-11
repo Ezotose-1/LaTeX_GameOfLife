@@ -1,6 +1,6 @@
 
 
-DOC = draft.pdf
+DOC = life.pdf
 
 all: $(DOC)
 
