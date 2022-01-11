@@ -1,3 +1,25 @@
+%
+% SPDX-License-Identifier: GPL-2.0-or-later
+%
+% Latex Game Of Life
+%
+% Copyright (C) 2022 Pierre B <https://github.com/Ezotose-1)
+%
+% This program is free software; you can redistribute it and/or modify it
+% under the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your option)
+% any later version.
+%
+% This program is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+% more details.
+%
+% You should have received a copy of the GNU General Public License along with
+% this program; if not, write to the Free Software Foundation, Inc., 51
+% Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+%
+
 \documentclass[border=1mm,multi=page]{standalone}
 
 \usepackage{tikz}
@@ -20,6 +42,7 @@
 \newcount\NeighboursCount
 
 \Ymax 0
+
 
 % \brief: Create variables for each cell of the board %
 \xintFor #1 in \initialboard  \do
@@ -58,6 +81,8 @@
 \expandafter\def\csname oldnode0.\the\numexpr\Ymax+1\endcsname {0}%
 \expandafter\def\csname oldnode\the\numexpr\Xmax+1.\the\numexpr\Ymax+1\endcsname {0}%
 
+
+
 % \brief: For each current node -> create a save node to build the next generations %
 \newcommand\SaveNodes{%
     \xintFor ##1 in \xintintegers \do
@@ -76,6 +101,8 @@
        \ifnum ##1=\Xmax\expandafter\xintBreakFor\fi
    }%
 }%
+
+
 
 % \brief: Pretty print the current generation of the nodes %
 \newcommand\PPrint {%
@@ -102,6 +129,8 @@
     \end{page}
 }%
 
+
+
 % \brief: Count all neighbours of a cell and store the result in NeighboursCount %
 % \params: #1 is x position, #2 is y position %
 \newcommand\Neighborhood[2]{%
@@ -116,8 +145,9 @@
     \advance\NeighboursCount by \csname oldnode\number#1.\number\numexpr#2-1\endcsname
     \advance\NeighboursCount by \csname oldnode\number\numexpr#1+1.\number\numexpr#2-1\endcsname
     \advance\NeighboursCount by \csname oldnode\number\numexpr#1-1.\number\numexpr#2-1\endcsname
-
 }%
+
+
 
 % \brief: Apply GameOfLife rules on one cells %
 % \params: #1 is x position, #2 is y position %
@@ -159,6 +189,8 @@
    }%
 }%
 
+
+
 % \brief: Generate many generations %
 % \param: #1 number of generations to build %
 \newcommand\Generations[1] {%
@@ -174,8 +206,9 @@
 
 }%
 
+
+
 \PPrint{}
 % Load precise number of generations into the pdf %
 \Generations{100}
-
 \end{document}

@@ -20,8 +20,10 @@ make
 To build the pdf, you need to have pdflatex install on your device.
 
 ## Utilisation
-The program will load a board store in ``ref/*.tex`` by including the tex file. You can create your own board and include it in the ``src/draft.tex``.
-By default, it will do **100 generations** : one for each page of the pdf file. You can configure it in the ``src/draft.tex`` :
+The program will load a board store in ``ref/*.tex`` by including the tex file.
+You can create your own board and include it in the ``src/life.tex``.
+By default, it will do **100 generations** : one for each page of the pdf file.
+You can configure it in the ``src/life.tex`` :
 ```latex
 % Load precise number of generations into the pdf %
 \Generation{100}
@@ -31,12 +33,12 @@ By default, it will do **100 generations** : one for each page of the pdf file. 
 ## File architecture
 ```
 LaTeX_GameOfLife
-├── ref 							// References boards
+├── ref                // References boards
 │   ├── *.tex
-│   └── output						// References .pdf 
+│   └── output         // References .pdf 
 │   │   └── *.pdf
-└── src								// Source code
-    ├── draft.tex
+└── src                // Source code
+    ├── life.tex
     └── Makefile
 ```
 
