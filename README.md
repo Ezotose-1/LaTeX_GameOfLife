@@ -47,9 +47,6 @@ LaTeX_GameOfLife
 ### License
 ----
 Developped by Pierre B. & CPB
-
 Languages : LaTeX
-
 Free to use 
-
 *GNU General Public License v2.0*
